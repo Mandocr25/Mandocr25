@@ -1,0 +1,56 @@
+# Generate the Xcode project on a Mac with:  brew install xcodegen && xcodegen generate
+name: Hive
+options:
+  bundleIdPrefix: com.yourname          # <- change to something unique to you
+  deploymentTarget:
+    iOS: "18.0"                         # iPhone 13 runs iOS 18 / iOS 26
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""                # <- set your Apple Team ID (or pick it in Xcode)
+    CODE_SIGN_STYLE: Automatic
+    TARGETED_DEVICE_FAMILY: "1"
+targets:
+  Hive:
+    type: application
+    platform: iOS
+    sources: [Hive, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.hive
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) HIVE_APP"
+    info:
+      path: Hive/Info.plist
+      properties:
+        CFBundleDisplayName: Hive
+        UILaunchScreen: {}
+        UIBackgroundModes: [audio]
+        NSSupportsLiveActivities: true
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSMicrophoneUsageDescription: Hive listens to your conversations so it can summarize them, remember what matters and create to-dos. Audio is never saved.
+        NSSpeechRecognitionUsageDescription: Hive converts speech to text on your iPhone so it can understand your conversations.
+    entitlements:
+      path: Hive/Hive.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.yourname.hive]
+    dependencies:
+      - target: HiveWidgets
+  HiveWidgets:
+    type: app-extension
+    platform: iOS
+    sources: [HiveWidgets, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yourname.hive.widgets
+    info:
+      path: HiveWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Hive Widgets
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: HiveWidgets/HiveWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.yourname.hive]
